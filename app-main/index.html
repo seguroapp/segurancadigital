@@ -45,6 +45,12 @@
 <body>
   <a class="skip-link" href="#conteudo">Pular para o conteudo</a>
 
+  <form name="contato-site" data-netlify="true" netlify-honeypot="bot-field" hidden>
+    <input type="text" name="name">
+    <input type="email" name="email">
+    <textarea name="message"></textarea>
+  </form>
+
   <header class="site-header">
     <div class="container topbar">
       <a class="brand" href="#inicio" aria-label="Voltar ao inicio">
@@ -331,6 +337,7 @@
           class="contact-card"
           id="contact-form"
           name="contato-site"
+          action="/obrigado.html"
           method="POST"
           data-netlify="true"
           netlify-honeypot="bot-field"
