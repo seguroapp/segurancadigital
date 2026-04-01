@@ -124,12 +124,113 @@ faqButtons.forEach((button) => {
 
 const contactForm = document.querySelector('#contact-form');
 const contactFeedback = document.querySelector('#contact-feedback');
+const contactStatus = document.querySelector('#contact-status');
+const contactDraftStorageKey = 'seguroapp-contact-draft';
 
 function encodeFormData(formData) {
   return new URLSearchParams(formData).toString();
 }
 
+function getContactDraft() {
+  try {
+    const savedDraft = window.localStorage.getItem(contactDraftStorageKey);
+    return savedDraft ? JSON.parse(savedDraft) : null;
+  } catch (error) {
+    return null;
+  }
+}
+
+function setContactStatus(message) {
+  if (contactStatus) {
+    contactStatus.textContent = message;
+  }
+}
+
+function saveContactDraft() {
+  if (!contactForm) {
+    return;
+  }
+
+  const formData = new FormData(contactForm);
+  const draft = {
+    name: String(formData.get('name') || '').trim(),
+    email: String(formData.get('email') || '').trim(),
+    message: String(formData.get('message') || '').trim(),
+    updatedAt: new Date().toISOString(),
+  };
+
+  const hasContent = draft.name || draft.email || draft.message;
+
+  try {
+    if (!hasContent) {
+      window.localStorage.removeItem(contactDraftStorageKey);
+      setContactStatus('');
+      return;
+    }
+
+    window.localStorage.setItem(contactDraftStorageKey, JSON.stringify(draft));
+    setContactStatus('Rascunho salvo automaticamente neste navegador.');
+  } catch (error) {
+    setContactStatus('Nao foi possivel salvar o rascunho neste navegador.');
+  }
+}
+
+function restoreContactDraft() {
+  if (!contactForm) {
+    return;
+  }
+
+  const draft = getContactDraft();
+
+  if (!draft) {
+    return;
+  }
+
+  const nameInput = contactForm.querySelector('input[name="name"]');
+  const emailInput = contactForm.querySelector('input[name="email"]');
+  const messageInput = contactForm.querySelector('textarea[name="message"]');
+
+  if (nameInput && draft.name) {
+    nameInput.value = draft.name;
+  }
+
+  if (emailInput && draft.email) {
+    emailInput.value = draft.email;
+  }
+
+  if (messageInput && draft.message) {
+    messageInput.value = draft.message;
+  }
+
+  const updatedAt = draft.updatedAt ? new Date(draft.updatedAt) : null;
+  const formattedDate = updatedAt && !Number.isNaN(updatedAt.getTime())
+    ? updatedAt.toLocaleString('pt-BR')
+    : null;
+
+  setContactStatus(
+    formattedDate
+      ? `Rascunho recuperado automaticamente. Ultima atualizacao: ${formattedDate}.`
+      : 'Rascunho recuperado automaticamente.'
+  );
+}
+
+function clearContactDraft() {
+  try {
+    window.localStorage.removeItem(contactDraftStorageKey);
+  } catch (error) {
+    return;
+  }
+
+  setContactStatus('Informacoes enviadas e rascunho limpo neste navegador.');
+}
+
 if (contactForm && contactFeedback) {
+  restoreContactDraft();
+
+  contactForm.querySelectorAll('input[name="name"], input[name="email"], textarea[name="message"]').forEach((field) => {
+    field.addEventListener('input', saveContactDraft);
+  });
+
   contactForm.addEventListener('submit', async (event) => {
     event.preventDefault();
 
@@ -139,7 +240,7 @@ if (contactForm && contactFeedback) {
     const message = String(formData.get('message') || '').trim();
 
     if (!name || !email || !message) {
-      contactFeedback.textContent = 'Preencha nome, e-mail e mensagem para simular o envio.';
+      contactFeedback.textContent = 'Preencha nome, e-mail e mensagem para continuar.';
       return;
     }
 
@@ -153,6 +254,7 @@ if (contactForm && contactFeedback) {
     if (window.location.protocol === 'file:') {
       contactFeedback.textContent = `Formulario validado localmente. No Netlify, a mensagem seria enviada. Obrigado, ${name}.`;
       contactForm.reset();
+      clearContactDraft();
       return;
     }
 
@@ -167,6 +269,7 @@ if (contactForm && contactFeedback) {
 
       contactFeedback.textContent = `Mensagem enviada com sucesso. Obrigado, ${name}.`;
       contactForm.reset();
+      clearContactDraft();
     } catch (error) {
       contactFeedback.textContent = 'Nao foi possivel enviar agora. Tente novamente em instantes.';
     }
