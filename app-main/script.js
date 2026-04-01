@@ -65,8 +65,133 @@ updateChecklist();
 
 const riskForm = document.querySelector('#risk-form');
 const riskResult = document.querySelector('#risk-result');
+const riskStatus = document.querySelector('#risk-status');
+const riskClearButton = document.querySelector('#risk-clear-button');
+const riskStorageKey = 'seguroapp-risk-draft';
+const riskResultStorageKey = 'seguroapp-risk-result';
+
+function setRiskStatus(message) {
+  if (riskStatus) {
+    riskStatus.textContent = message;
+  }
+}
+
+function getRiskDraft() {
+  try {
+    const savedDraft = window.localStorage.getItem(riskStorageKey);
+    return savedDraft ? JSON.parse(savedDraft) : null;
+  } catch (error) {
+    return null;
+  }
+}
+
+function saveRiskDraft() {
+  if (!riskForm) {
+    return;
+  }
+
+  const formData = new FormData(riskForm);
+  const draft = Object.fromEntries(formData.entries());
+  const hasValues = Object.values(draft).some(Boolean);
+
+  try {
+    if (!hasValues) {
+      window.localStorage.removeItem(riskStorageKey);
+      setRiskStatus('');
+      return;
+    }
+
+    window.localStorage.setItem(
+      riskStorageKey,
+      JSON.stringify({
+        ...draft,
+        updatedAt: new Date().toISOString(),
+      })
+    );
+    setRiskStatus('Diagnostico salvo automaticamente neste navegador.');
+  } catch (error) {
+    setRiskStatus('Nao foi possivel salvar o diagnostico neste navegador.');
+  }
+}
+
+function renderRiskResult(result) {
+  if (!riskResult || !result) {
+    return;
+  }
+
+  riskResult.dataset.level = result.level;
+  riskResult.innerHTML = `
+    <p class="result-kicker">Resultado</p>
+    <h3>${result.title}</h3>
+    <p>${result.message}</p>
+  `;
+}
+
+function restoreRiskState() {
+  if (!riskForm) {
+    return;
+  }
+
+  const draft = getRiskDraft();
+
+  if (draft) {
+    Object.entries(draft).forEach(([key, value]) => {
+      if (key === 'updatedAt') {
+        return;
+      }
+
+      const field = riskForm.querySelector(`[name="${key}"]`);
+      if (field && typeof value === 'string') {
+        field.value = value;
+      }
+    });
+
+    setRiskStatus('Diagnostico recuperado automaticamente neste navegador.');
+  }
+
+  try {
+    const storedResult = window.localStorage.getItem(riskResultStorageKey);
+    if (storedResult) {
+      renderRiskResult(JSON.parse(storedResult));
+    }
+  } catch (error) {
+    return;
+  }
+}
+
+function clearRiskState() {
+  try {
+    window.localStorage.removeItem(riskStorageKey);
+    window.localStorage.removeItem(riskResultStorageKey);
+  } catch (error) {
+    return;
+  }
+
+  if (riskForm) {
+    riskForm.reset();
+  }
+
+  if (riskResult) {
+    riskResult.dataset.level = '';
+    riskResult.innerHTML = `
+      <p class="result-kicker">Resultado</p>
+      <h3>Preencha o formulario para ver seu perfil.</h3>
+      <p>Voce recebera uma classificacao simples com recomendacoes praticas de melhoria.</p>
+    `;
+  }
+
+  setRiskStatus('Dados do diagnostico removidos deste navegador.');
+}
 
 if (riskForm && riskResult) {
+  restoreRiskState();
+
+  riskForm.querySelectorAll('select').forEach((field) => {
+    field.addEventListener('change', saveRiskDraft);
+  });
+
+  riskClearButton?.addEventListener('click', clearRiskState);
+
   riskForm.addEventListener('submit', (event) => {
     event.preventDefault();
 
@@ -91,12 +216,18 @@ if (riskForm && riskResult) {
       message = 'Voce ja tem alguns cuidados, mas ainda existem falhas que aumentam o risco de golpe ou invasao. Foque primeiro em contas principais e dispositivos de uso diario.';
     }
 
-    riskResult.dataset.level = level;
-    riskResult.innerHTML = `
-      <p class="result-kicker">Resultado</p>
-      <h3>${title}</h3>
-      <p>${message}</p>
-    `;
+    const result = { level, title, message, savedAt: new Date().toISOString() };
+
+    renderRiskResult(result);
+
+    try {
+      window.localStorage.setItem(riskResultStorageKey, JSON.stringify(result));
+    } catch (error) {
+      setRiskStatus('Resultado exibido, mas sem conseguir salvar localmente.');
+      return;
+    }
+
+    setRiskStatus('Resultado salvo neste navegador para consulta posterior.');
   });
 }
 
@@ -126,6 +257,7 @@ const contactForm = document.querySelector('#contact-form');
 const contactFeedback = document.querySelector('#contact-feedback');
 const contactStatus = document.querySelector('#contact-status');
 const contactDraftStorageKey = 'seguroapp-contact-draft';
+const contactSubmitButton = document.querySelector('#contact-form button[type="submit"]');
 
 function encodeFormData(formData) {
   return new URLSearchParams(formData).toString();
@@ -224,6 +356,16 @@ function clearContactDraft() {
   setContactStatus('Informacoes enviadas e rascunho limpo neste navegador.');
 }
 
+function setContactSubmittingState(isSubmitting) {
+  if (!contactSubmitButton) {
+    return;
+  }
+
+  contactSubmitButton.disabled = isSubmitting;
+  contactSubmitButton.classList.toggle('is-loading', isSubmitting);
+  contactSubmitButton.textContent = isSubmitting ? 'Enviando mensagem' : 'Enviar mensagem';
+}
+
 if (contactForm && contactFeedback) {
   restoreContactDraft();
 
@@ -233,6 +375,7 @@ if (contactForm && contactFeedback) {
 
   contactForm.addEventListener('submit', async (event) => {
     event.preventDefault();
+    contactFeedback.textContent = '';
 
     const formData = new FormData(contactForm);
     const name = String(formData.get('name') || '').trim();
@@ -251,10 +394,13 @@ if (contactForm && contactFeedback) {
       return;
     }
 
+    setContactSubmittingState(true);
+
     if (window.location.protocol === 'file:') {
       contactFeedback.textContent = `Formulario validado localmente. No Netlify, a mensagem seria enviada. Obrigado, ${name}.`;
       contactForm.reset();
       clearContactDraft();
+      setContactSubmittingState(false);
       return;
     }
 
@@ -272,6 +418,8 @@ if (contactForm && contactFeedback) {
       clearContactDraft();
     } catch (error) {
       contactFeedback.textContent = 'Nao foi possivel enviar agora. Tente novamente em instantes.';
+    } finally {
+      setContactSubmittingState(false);
     }
   });
 }

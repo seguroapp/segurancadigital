@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Area Administrativa | Seguro App</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <a class="skip-link" href="#conteudo">Pular para o conteudo</a>
+
+  <header class="site-header">
+    <div class="container topbar">
+      <a class="brand" href="index.html#inicio" aria-label="Voltar ao inicio">
+        <span class="brand-mark" aria-hidden="true">
+          <video class="brand-video" muted autoplay loop playsinline>
+            <source src="logotipo.mp4" type="video/mp4">
+          </video>
+        </span>
+        <span class="brand-copy">
+          <strong>Seguro App</strong>
+          <span>Area simples de apoio para operacao do projeto.</span>
+        </span>
+      </a>
+
+      <nav class="site-nav" aria-label="Administracao">
+        <ul>
+          <li><a href="index.html">Voltar ao site</a></li>
+          <li><a href="#exportacao">Exportacao</a></li>
+          <li><a href="#acesso">Acesso</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="conteudo" class="section">
+    <div class="container section-header admin-hero">
+      <p class="eyebrow">Area administrativa</p>
+      <h1>Operacao simples para acompanhar e exportar mensagens.</h1>
+      <p>
+        Esta pagina nao expoe credenciais nem baixa mensagens diretamente do Netlify no navegador.
+        Por seguranca, a exportacao real continua sendo feita dentro do painel autenticado da plataforma.
+      </p>
+    </div>
+
+    <section class="section admin-section" id="exportacao">
+      <div class="container cards-grid admin-grid">
+        <article class="info-card">
+          <h3>Formulario ativo</h3>
+          <p>Nome tecnico do formulario publicado: <strong>contato-site</strong>.</p>
+          <p>As submissões entram no painel do site no Netlify assim que o usuario envia a mensagem.</p>
+        </article>
+        <article class="info-card">
+          <h3>Como exportar</h3>
+          <p>Abra o painel do site, entre em Forms, selecione o formulario e use a opcao de exportacao em CSV.</p>
+          <p>Esse fluxo e o mais seguro porque depende do login autenticado no Netlify.</p>
+        </article>
+        <article class="info-card">
+          <h3>Links rapidos</h3>
+          <p><a class="button button-secondary" href="https://app.netlify.com/" target="_blank" rel="noreferrer">Abrir painel do Netlify</a></p>
+          <p><a class="button button-secondary" href="https://docs.netlify.com/forms/setup/" target="_blank" rel="noreferrer">Ver documentacao</a></p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section section-soft" id="acesso">
+      <div class="container admin-panel">
+        <div class="info-card">
+          <p class="eyebrow">Fluxo recomendado</p>
+          <h2>Passo a passo de exportacao</h2>
+          <ol class="admin-steps">
+            <li>Entre em app.netlify.com com a conta que administra o site.</li>
+            <li>Abra o site Seguro App.</li>
+            <li>Entre na secao Forms.</li>
+            <li>Escolha o formulario contato-site.</li>
+            <li>Use a opcao de exportar em CSV para baixar as mensagens.</li>
+          </ol>
+        </div>
+        <div class="tip-card">
+          <h3>Por que esta pagina nao busca mensagens direto?</h3>
+          <p>
+            O acesso direto exigiria token administrativo ou backend intermediario. Colocar isso no frontend
+            exporia credenciais e enfraqueceria a seguranca do projeto.
+          </p>
+          <p>
+            Se voce quiser, o proximo nivel natural e criar um painel privado com autenticacao e uma funcao
+            serverless para consultar o Netlify com seguranca.
+          </p>
+        </div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

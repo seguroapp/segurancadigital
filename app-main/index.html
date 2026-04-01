@@ -77,6 +77,7 @@
           <li><a href="#diagnostico">Diagnostico</a></li>
           <li><a href="#faq">FAQ</a></li>
           <li><a href="#contato">Contato</a></li>
+          <li><a href="admin.html">Admin</a></li>
         </ul>
       </nav>
     </div>
@@ -275,7 +276,11 @@
             </select>
           </label>
 
-          <button class="button button-primary" type="submit">Calcular diagnostico</button>
+          <div class="form-actions">
+            <button class="button button-primary" type="submit" id="risk-submit-button">Calcular diagnostico</button>
+            <button class="button button-secondary" type="button" id="risk-clear-button">Limpar dados</button>
+          </div>
+          <p class="form-status" id="risk-status" aria-live="polite"></p>
         </form>
 
         <aside class="result-card" id="risk-result" aria-live="polite">
@@ -380,6 +385,7 @@
         <a href="#guia">Guia pratico</a>
         <a href="#faq">Perguntas frequentes</a>
         <a href="#contato">Contato</a>
+        <a href="admin.html">Area administrativa</a>
       </div>
       <p class="footer-copy">&copy; <span id="current-year"></span> Projeto academico atualizado para uso informativo.</p>
     </div>

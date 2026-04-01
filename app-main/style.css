@@ -496,6 +496,12 @@ textarea {
   gap: 1rem;
 }
 
+.form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+}
+
 .diagnostic-card label,
 .contact-card label {
   display: grid;
@@ -587,6 +593,57 @@ textarea {
   font-size: 0.95rem;
 }
 
+.button[disabled] {
+  cursor: wait;
+  opacity: 0.75;
+  transform: none;
+}
+
+.button.is-loading::after {
+  content: "";
+  inline-size: 1rem;
+  block-size: 1rem;
+  border-radius: 999px;
+  border: 2px solid rgba(255, 255, 255, 0.45);
+  border-top-color: #fff;
+  animation: spin 800ms linear infinite;
+}
+
+.button-secondary.is-loading::after {
+  border-color: rgba(102, 8, 96, 0.2);
+  border-top-color: var(--plum);
+}
+
+.admin-hero {
+  margin-top: 2rem;
+}
+
+.admin-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.admin-panel {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr;
+  gap: 1.2rem;
+}
+
+.admin-steps {
+  margin: 1rem 0 0;
+  padding-left: 1.2rem;
+  color: var(--muted);
+}
+
+.admin-steps li + li {
+  margin-top: 0.65rem;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 .site-footer {
   padding: 2rem 0 3rem;
 }
@@ -620,6 +677,8 @@ textarea {
   .checklist-layout,
   .diagnostic-layout,
   .contact-layout,
+  .admin-grid,
+  .admin-panel,
   .footer-content,
   .trust-band-grid {
     grid-template-columns: 1fr 1fr;
@@ -673,6 +732,8 @@ textarea {
   .checklist-layout,
   .diagnostic-layout,
   .contact-layout,
+  .admin-grid,
+  .admin-panel,
   .trust-band-grid {
     grid-template-columns: 1fr;
   }
