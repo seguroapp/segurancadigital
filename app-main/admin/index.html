@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Painel Privado | Seguro App</title>
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+  <main id="conteudo" class="section">
+    <div class="container admin-panel-private">
+      <section class="info-card">
+        <p class="eyebrow">Painel privado</p>
+        <h1>Mensagens do formulario em ambiente protegido</h1>
+        <p>
+          Este dashboard foi preparado para funcionar com Netlify Identity e uma function serverless.
+          Quando a conta autenticada tiver role <strong>admin</strong> e as variaveis de ambiente estiverem configuradas,
+          as submissões podem ser consultadas daqui com seguranca.
+        </p>
+        <div class="form-actions">
+          <button class="button button-primary" id="identity-login-button" type="button">Entrar</button>
+          <button class="button button-secondary" id="identity-logout-button" type="button">Sair</button>
+          <button class="button button-secondary" id="admin-refresh-button" type="button">Atualizar mensagens</button>
+        </div>
+        <p class="form-status" id="admin-auth-status" aria-live="polite">Aguardando autenticacao.</p>
+      </section>
+
+      <section class="info-card">
+        <div class="history-header">
+          <div>
+            <p class="eyebrow">Submissoes</p>
+            <h3>Ultimas mensagens recebidas</h3>
+          </div>
+        </div>
+        <p class="form-status" id="admin-submissions-status" aria-live="polite">Nenhuma consulta realizada ainda.</p>
+        <div class="history-list" id="admin-submissions-list">
+          <p class="history-empty">Entre com uma conta admin e clique em atualizar mensagens.</p>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>

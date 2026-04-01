@@ -67,12 +67,23 @@ const riskForm = document.querySelector('#risk-form');
 const riskResult = document.querySelector('#risk-result');
 const riskStatus = document.querySelector('#risk-status');
 const riskClearButton = document.querySelector('#risk-clear-button');
+const riskExportButton = document.querySelector('#risk-export-button');
+const riskHistoryClearButton = document.querySelector('#risk-history-clear-button');
+const riskHistoryList = document.querySelector('#risk-history-list');
+const riskHistoryStatus = document.querySelector('#risk-history-status');
 const riskStorageKey = 'seguroapp-risk-draft';
 const riskResultStorageKey = 'seguroapp-risk-result';
+const riskHistoryStorageKey = 'seguroapp-risk-history';
 
 function setRiskStatus(message) {
   if (riskStatus) {
     riskStatus.textContent = message;
+  }
+}
+
+function setRiskHistoryStatus(message) {
+  if (riskHistoryStatus) {
+    riskHistoryStatus.textContent = message;
   }
 }
 
@@ -114,6 +125,102 @@ function saveRiskDraft() {
   }
 }
 
+function getRiskHistory() {
+  try {
+    const savedHistory = window.localStorage.getItem(riskHistoryStorageKey);
+    return savedHistory ? JSON.parse(savedHistory) : [];
+  } catch (error) {
+    return [];
+  }
+}
+
+function renderRiskHistory() {
+  if (!riskHistoryList) {
+    return;
+  }
+
+  const history = getRiskHistory();
+
+  if (!history.length) {
+    riskHistoryList.innerHTML = '<p class="history-empty">Nenhum diagnostico salvo ainda.</p>';
+    return;
+  }
+
+  riskHistoryList.innerHTML = history
+    .slice()
+    .reverse()
+    .map((entry) => {
+      const submittedAt = entry.savedAt
+        ? new Date(entry.savedAt).toLocaleString('pt-BR')
+        : 'Sem data';
+
+      return `
+        <article class="history-item">
+          <strong>${entry.title}</strong>
+          <span>Nivel: ${entry.level}</span>
+          <span>${submittedAt}</span>
+          <p>${entry.message}</p>
+        </article>
+      `;
+    })
+    .join('');
+}
+
+function appendRiskHistory(result) {
+  const history = getRiskHistory();
+  history.push(result);
+
+  try {
+    window.localStorage.setItem(riskHistoryStorageKey, JSON.stringify(history.slice(-15)));
+    renderRiskHistory();
+    setRiskHistoryStatus('Historico local atualizado com sucesso.');
+  } catch (error) {
+    setRiskHistoryStatus('Nao foi possivel atualizar o historico local.');
+  }
+}
+
+function exportRiskHistoryCsv() {
+  const history = getRiskHistory();
+
+  if (!history.length) {
+    setRiskHistoryStatus('Nao ha diagnosticos para exportar.');
+    return;
+  }
+
+  const header = ['data', 'nivel', 'titulo', 'mensagem'];
+  const lines = history.map((entry) => [
+    entry.savedAt || '',
+    entry.level || '',
+    entry.title || '',
+    entry.message || '',
+  ]);
+
+  const csv = [header, ...lines]
+    .map((line) => line.map((value) => `"${String(value).replaceAll('"', '""')}"`).join(','))
+    .join('\n');
+
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const anchor = document.createElement('a');
+  anchor.href = url;
+  anchor.download = `seguroapp-diagnosticos-${new Date().toISOString().slice(0, 10)}.csv`;
+  document.body.appendChild(anchor);
+  anchor.click();
+  anchor.remove();
+  URL.revokeObjectURL(url);
+  setRiskHistoryStatus('Arquivo CSV gerado com sucesso.');
+}
+
+function clearRiskHistory() {
+  try {
+    window.localStorage.removeItem(riskHistoryStorageKey);
+    renderRiskHistory();
+    setRiskHistoryStatus('Historico local removido deste navegador.');
+  } catch (error) {
+    setRiskHistoryStatus('Nao foi possivel limpar o historico local.');
+  }
+}
+
 function renderRiskResult(result) {
   if (!riskResult || !result) {
     return;
@@ -148,6 +255,8 @@ function restoreRiskState() {
 
     setRiskStatus('Diagnostico recuperado automaticamente neste navegador.');
   }
+
+  renderRiskHistory();
 
   try {
     const storedResult = window.localStorage.getItem(riskResultStorageKey);
@@ -191,6 +300,8 @@ if (riskForm && riskResult) {
   });
 
   riskClearButton?.addEventListener('click', clearRiskState);
+  riskExportButton?.addEventListener('click', exportRiskHistoryCsv);
+  riskHistoryClearButton?.addEventListener('click', clearRiskHistory);
 
   riskForm.addEventListener('submit', (event) => {
     event.preventDefault();
@@ -227,6 +338,7 @@ if (riskForm && riskResult) {
       return;
     }
 
+    appendRiskHistory(result);
     setRiskStatus('Resultado salvo neste navegador para consulta posterior.');
   });
 }

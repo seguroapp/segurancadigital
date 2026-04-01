@@ -502,6 +502,52 @@ textarea {
   gap: 0.8rem;
 }
 
+.history-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.history-card h3 {
+  margin: 0;
+  color: var(--plum);
+}
+
+.diagnosis-history-layout {
+  margin-top: 1.5rem;
+}
+
+.history-list {
+  display: grid;
+  gap: 0.9rem;
+  margin-top: 1rem;
+}
+
+.history-item {
+  display: grid;
+  gap: 0.35rem;
+  padding: 1rem;
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.78);
+  border: 1px solid rgba(102, 8, 96, 0.08);
+}
+
+.history-item strong {
+  color: var(--plum);
+}
+
+.history-item span,
+.history-item p,
+.history-empty,
+.status-list {
+  color: var(--muted);
+}
+
+.history-empty {
+  margin: 0;
+}
+
 .diagnostic-card label,
 .contact-card label {
   display: grid;
@@ -628,6 +674,12 @@ textarea {
   gap: 1.2rem;
 }
 
+.admin-panel-private {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.2rem;
+}
+
 .admin-steps {
   margin: 1rem 0 0;
   padding-left: 1.2rem;
@@ -636,6 +688,48 @@ textarea {
 
 .admin-steps li + li {
   margin-top: 0.65rem;
+}
+
+.status-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.status-ready {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(254, 233, 166, 0.24));
+}
+
+.status-pending {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(250, 88, 148, 0.14));
+}
+
+.status-list {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0 0;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.status-list li {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+}
+
+.status-dot {
+  inline-size: 0.8rem;
+  block-size: 0.8rem;
+  border-radius: 999px;
+  display: inline-block;
+}
+
+.status-ready-dot {
+  background: #2c9f68;
+}
+
+.status-pending-dot {
+  background: #fa5894;
 }
 
 @keyframes spin {
@@ -679,6 +773,7 @@ textarea {
   .contact-layout,
   .admin-grid,
   .admin-panel,
+  .admin-panel-private,
   .footer-content,
   .trust-band-grid {
     grid-template-columns: 1fr 1fr;
@@ -734,8 +829,13 @@ textarea {
   .contact-layout,
   .admin-grid,
   .admin-panel,
+  .admin-panel-private,
   .trust-band-grid {
     grid-template-columns: 1fr;
+  }
+
+  .history-header {
+    flex-direction: column;
   }
 
   .site-nav ul {

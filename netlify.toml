@@ -1,5 +1,19 @@
 [build]
   publish = "app-main"
+  functions = "netlify/functions"
+
+[[redirects]]
+  from = "/admin/*"
+  to = "/admin/:splat"
+  status = 200
+  force = true
+  conditions = {Role = ["admin"]}
+
+[[redirects]]
+  from = "/admin/*"
+  to = "/login-required.html"
+  status = 200
+  force = true
 
 [[headers]]
   for = "/*"

@@ -30,6 +30,7 @@
           <li><a href="index.html">Voltar ao site</a></li>
           <li><a href="#exportacao">Exportacao</a></li>
           <li><a href="#acesso">Acesso</a></li>
+          <li><a href="#painel-privado">Painel privado</a></li>
         </ul>
       </nav>
     </div>
@@ -44,6 +45,26 @@
         Por seguranca, a exportacao real continua sendo feita dentro do painel autenticado da plataforma.
       </p>
     </div>
+
+    <section class="section" id="painel-privado">
+      <div class="container cards-grid admin-grid">
+        <article class="info-card status-card status-ready">
+          <p class="eyebrow">Painel privado</p>
+          <h3>Base pronta para autenticacao</h3>
+          <p>Foi criado um dashboard protegido em <strong>/admin/</strong> com suporte a Netlify Identity e consulta via function serverless.</p>
+        </article>
+        <article class="info-card status-card status-pending">
+          <p class="eyebrow">Configuracao pendente</p>
+          <h3>Ative Identity e variaveis</h3>
+          <p>Para listar mensagens direto no painel privado, ainda faltam o Identity do Netlify e as variaveis de ambiente seguras.</p>
+        </article>
+        <article class="info-card status-card status-ready">
+          <p class="eyebrow">Acesso rapido</p>
+          <h3>Entrar no dashboard</h3>
+          <p><a class="button button-primary" href="admin/">Abrir painel privado</a></p>
+        </article>
+      </div>
+    </section>
 
     <section class="section admin-section" id="exportacao">
       <div class="container cards-grid admin-grid">
@@ -60,6 +81,8 @@
         <article class="info-card">
           <h3>Links rapidos</h3>
           <p><a class="button button-secondary" href="https://app.netlify.com/" target="_blank" rel="noreferrer">Abrir painel do Netlify</a></p>
+          <p><a class="button button-secondary" href="https://app.netlify.com/sites/seguroapp/configuration/identity" target="_blank" rel="noreferrer">Abrir Netlify Identity</a></p>
+          <p><a class="button button-secondary" href="https://app.netlify.com/sites/seguroapp/configuration/env" target="_blank" rel="noreferrer">Abrir variaveis de ambiente</a></p>
           <p><a class="button button-secondary" href="https://docs.netlify.com/forms/setup/" target="_blank" rel="noreferrer">Ver documentacao</a></p>
         </article>
       </div>
@@ -76,6 +99,8 @@
             <li>Entre na secao Forms.</li>
             <li>Escolha o formulario contato-site.</li>
             <li>Use a opcao de exportar em CSV para baixar as mensagens.</li>
+            <li>Para o painel privado, ative o Identity e marque o usuario com role <strong>admin</strong>.</li>
+            <li>Cadastre as variaveis <strong>NETLIFY_API_TOKEN</strong> e <strong>NETLIFY_SITE_ID</strong>.</li>
           </ol>
         </div>
         <div class="tip-card">
@@ -87,6 +112,29 @@
           <p>
             Se voce quiser, o proximo nivel natural e criar um painel privado com autenticacao e uma funcao
             serverless para consultar o Netlify com seguranca.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-soft">
+      <div class="container admin-panel">
+        <div class="info-card">
+          <p class="eyebrow">Estado operacional</p>
+          <h2>Resumo rapido</h2>
+          <ul class="status-list">
+            <li><span class="status-dot status-ready-dot"></span> Site publicado no Netlify</li>
+            <li><span class="status-dot status-ready-dot"></span> Formulario contato-site ativo</li>
+            <li><span class="status-dot status-ready-dot"></span> Funcoes Netlify preparadas no repositorio</li>
+            <li><span class="status-dot status-pending-dot"></span> Identity ainda precisa ser ativado no painel</li>
+            <li><span class="status-dot status-pending-dot"></span> Variaveis seguras ainda precisam ser cadastradas</li>
+          </ul>
+        </div>
+        <div class="tip-card">
+          <h3>Proximo passo tecnico</h3>
+          <p>
+            Assim que Identity e as variaveis forem configurados, o dashboard privado passa a conseguir listar
+            as ultimas mensagens usando a function serverless sem expor token no frontend.
           </p>
         </div>
       </div>

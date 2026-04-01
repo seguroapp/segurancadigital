@@ -289,6 +289,25 @@
           <p>Voce recebera uma classificacao simples com recomendacoes praticas de melhoria.</p>
         </aside>
       </div>
+
+      <div class="container diagnosis-history-layout">
+        <article class="info-card history-card">
+          <div class="history-header">
+            <div>
+              <p class="eyebrow">Historico local</p>
+              <h3>Ultimos diagnosticos salvos neste navegador</h3>
+            </div>
+            <div class="form-actions">
+              <button class="button button-secondary" type="button" id="risk-export-button">Exportar CSV</button>
+              <button class="button button-secondary" type="button" id="risk-history-clear-button">Limpar historico</button>
+            </div>
+          </div>
+          <p class="form-status" id="risk-history-status" aria-live="polite"></p>
+          <div class="history-list" id="risk-history-list">
+            <p class="history-empty">Nenhum diagnostico salvo ainda.</p>
+          </div>
+        </article>
+      </div>
     </section>
 
     <section class="section section-soft" id="faq">
